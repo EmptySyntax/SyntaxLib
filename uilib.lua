@@ -1,34 +1,31 @@
-local UILib = {}
+local Library = {}
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
--- Constants for styling
-local COLORS = {
-    Background = Color3.fromRGB(25, 25, 25),
-    Secondary = Color3.fromRGB(35, 35, 35),
-    Text = Color3.fromRGB(255, 255, 255),
-    Accent = Color3.fromRGB(70, 70, 70),
-    Enabled = Color3.fromRGB(0, 170, 255)
-}
+-- Utility functions
+local function createTween(object, info, properties)
+    local tween = TweenService:Create(object, TweenInfo.new(info[1], info[2], info[3]), properties)
+    return tween
+end
 
-function UILib.new(title)
-    -- Create main GUI elements
-    local ScreenGui = Instance.new("ScreenGui")
+function Library:CreateWindow(title)
+    -- Main GUI Components
+    local GUI = Instance.new("ScreenGui")
     local Main = Instance.new("Frame")
     local UICorner = Instance.new("UICorner")
     local Title = Instance.new("TextLabel")
-    local Container = Instance.new("ScrollingFrame")
+    local ElementsHolder = Instance.new("ScrollingFrame")
     local UIListLayout = Instance.new("UIListLayout")
     
-    ScreenGui.Name = "UILibrary"
-    ScreenGui.Parent = game.CoreGui
-    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    -- Properties
+    GUI.Name = "DarkLibrary"
+    GUI.Parent = game.CoreGui
     
     Main.Name = "Main"
-    Main.Parent = ScreenGui
-    Main.BackgroundColor3 = COLORS.Background
-    Main.Position = UDim2.new(0.5, -150, 0.5, -125)
-    Main.Size = UDim2.new(0, 300, 0, 250)
+    Main.Parent = GUI
+    Main.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    Main.Position = UDim2.new(0.5, -150, 0.5, -175)
+    Main.Size = UDim2.new(0, 300, 0, 350)
     Main.Active = true
     Main.Draggable = true
     
@@ -38,131 +35,150 @@ function UILib.new(title)
     Title.Name = "Title"
     Title.Parent = Main
     Title.BackgroundTransparency = 1
-    Title.Position = UDim2.new(0, 10, 0, 5)
-    Title.Size = UDim2.new(1, -20, 0, 30)
-    Title.Font = Enum.Font.GothamSemibold
+    Title.Position = UDim2.new(0, 10, 0, 8)
+    Title.Size = UDim2.new(1, -20, 0, 20)
+    Title.Font = Enum.Font.Gotham
     Title.Text = title
-    Title.TextColor3 = COLORS.Text
-    Title.TextSize = 16
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.TextSize = 14
     
-    Container.Name = "Container"
-    Container.Parent = Main
-    Container.BackgroundTransparency = 1
-    Container.Position = UDim2.new(0, 5, 0, 40)
-    Container.Size = UDim2.new(1, -10, 1, -45)
-    Container.ScrollBarThickness = 2
-    Container.ScrollBarImageColor3 = COLORS.Accent
+    ElementsHolder.Name = "ElementsHolder"
+    ElementsHolder.Parent = Main
+    ElementsHolder.BackgroundTransparency = 1
+    ElementsHolder.Position = UDim2.new(0, 5, 0, 40)
+    ElementsHolder.Size = UDim2.new(1, -10, 1, -45)
+    ElementsHolder.ScrollBarThickness = 2
+    ElementsHolder.ScrollBarImageColor3 = Color3.fromRGB(45, 45, 45)
     
-    UIListLayout.Parent = Container
+    UIListLayout.Parent = ElementsHolder
     UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
     UIListLayout.Padding = UDim.new(0, 5)
     
-    local lib = {}
+    local Window = {}
     
-    function lib:AddButton(text, callback)
+    function Window:AddButton(text, callback)
         local Button = Instance.new("TextButton")
-        local UICorner_2 = Instance.new("UICorner")
+        local ButtonUICorner = Instance.new("UICorner")
         
         Button.Name = "Button"
-        Button.Parent = Container
-        Button.BackgroundColor3 = COLORS.Secondary
+        Button.Parent = ElementsHolder
+        Button.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
         Button.Size = UDim2.new(1, 0, 0, 30)
         Button.Font = Enum.Font.Gotham
         Button.Text = text
-        Button.TextColor3 = COLORS.Text
-        Button.TextSize = 14
+        Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Button.TextSize = 13
         Button.AutoButtonColor = false
         
-        UICorner_2.CornerRadius = UDim.new(0, 4)
-        UICorner_2.Parent = Button
+        ButtonUICorner.CornerRadius = UDim.new(0, 4)
+        ButtonUICorner.Parent = Button
         
-        Button.MouseButton1Click:Connect(callback)
+        Button.MouseEnter:Connect(function()
+            createTween(Button, {0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out}, {
+                BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+            }):Play()
+        end)
         
-        return Button
+        Button.MouseLeave:Connect(function()
+            createTween(Button, {0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out}, {
+                BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+            }):Play()
+        end)
+        
+        Button.MouseButton1Click:Connect(function()
+            callback()
+        end)
     end
     
-    function lib:AddTextbox(placeholder, callback)
+    function Window:AddToggle(text, callback)
+        local Toggle = Instance.new("TextButton")
+        local ToggleUICorner = Instance.new("UICorner")
+        local ToggleIndicator = Instance.new("Frame")
+        local ToggleIndicatorCorner = Instance.new("UICorner")
+        
+        Toggle.Name = "Toggle"
+        Toggle.Parent = ElementsHolder
+        Toggle.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+        Toggle.Size = UDim2.new(1, 0, 0, 30)
+        Toggle.Font = Enum.Font.Gotham
+        Toggle.Text = text
+        Toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Toggle.TextSize = 13
+        Toggle.AutoButtonColor = false
+        
+        ToggleUICorner.CornerRadius = UDim.new(0, 4)
+        ToggleUICorner.Parent = Toggle
+        
+        ToggleIndicator.Name = "Indicator"
+        ToggleIndicator.Parent = Toggle
+        ToggleIndicator.BackgroundColor3 = Color3.fromRGB(255, 65, 65)
+        ToggleIndicator.Position = UDim2.new(1, -35, 0.5, -8)
+        ToggleIndicator.Size = UDim2.new(0, 25, 0, 16)
+        
+        ToggleIndicatorCorner.CornerRadius = UDim.new(0, 4)
+        ToggleIndicatorCorner.Parent = ToggleIndicator
+        
+        local toggled = false
+        
+        Toggle.MouseButton1Click:Connect(function()
+            toggled = not toggled
+            callback(toggled)
+            
+            if toggled then
+                createTween(ToggleIndicator, {0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out}, {
+                    BackgroundColor3 = Color3.fromRGB(65, 255, 65)
+                }):Play()
+            else
+                createTween(ToggleIndicator, {0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out}, {
+                    BackgroundColor3 = Color3.fromRGB(255, 65, 65)
+                }):Play()
+            end
+        end)
+    end
+    
+    function Window:AddTextbox(placeholder, callback)
         local Textbox = Instance.new("TextBox")
-        local UICorner_2 = Instance.new("UICorner")
+        local TextboxUICorner = Instance.new("UICorner")
         
         Textbox.Name = "Textbox"
-        Textbox.Parent = Container
-        Textbox.BackgroundColor3 = COLORS.Secondary
+        Textbox.Parent = ElementsHolder
+        Textbox.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
         Textbox.Size = UDim2.new(1, 0, 0, 30)
         Textbox.Font = Enum.Font.Gotham
         Textbox.PlaceholderText = placeholder
         Textbox.Text = ""
-        Textbox.TextColor3 = COLORS.Text
-        Textbox.TextSize = 14
-        Textbox.PlaceholderColor3 = COLORS.Accent
+        Textbox.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Textbox.TextSize = 13
+        Textbox.PlaceholderColor3 = Color3.fromRGB(180, 180, 180)
         
-        UICorner_2.CornerRadius = UDim.new(0, 4)
-        UICorner_2.Parent = Textbox
+        TextboxUICorner.CornerRadius = UDim.new(0, 4)
+        TextboxUICorner.Parent = Textbox
         
         Textbox.FocusLost:Connect(function(enterPressed)
             if enterPressed then
                 callback(Textbox.Text)
             end
         end)
-        
-        return Textbox
     end
     
-    function lib:AddLabel(text)
+    function Window:AddLabel(text)
         local Label = Instance.new("TextLabel")
+        local LabelUICorner = Instance.new("UICorner")
         
         Label.Name = "Label"
-        Label.Parent = Container
-        Label.BackgroundTransparency = 1
-        Label.Size = UDim2.new(1, 0, 0, 20)
+        Label.Parent = ElementsHolder
+        Label.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+        Label.Size = UDim2.new(1, 0, 0, 30)
         Label.Font = Enum.Font.Gotham
         Label.Text = text
-        Label.TextColor3 = COLORS.Text
-        Label.TextSize = 14
+        Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Label.TextSize = 13
         
-        return Label
+        LabelUICorner.CornerRadius = UDim.new(0, 4)
+        LabelUICorner.Parent = Label
     end
     
-    function lib:AddToggle(text, callback)
-        local Toggle = Instance.new("TextButton")
-        local UICorner_2 = Instance.new("UICorner")
-        local Status = Instance.new("Frame")
-        local UICorner_3 = Instance.new("UICorner")
-        
-        Toggle.Name = "Toggle"
-        Toggle.Parent = Container
-        Toggle.BackgroundColor3 = COLORS.Secondary
-        Toggle.Size = UDim2.new(1, 0, 0, 30)
-        Toggle.Font = Enum.Font.Gotham
-        Toggle.Text = text
-        Toggle.TextColor3 = COLORS.Text
-        Toggle.TextSize = 14
-        Toggle.AutoButtonColor = false
-        
-        UICorner_2.CornerRadius = UDim.new(0, 4)
-        UICorner_2.Parent = Toggle
-        
-        Status.Name = "Status"
-        Status.Parent = Toggle
-        Status.AnchorPoint = Vector2.new(1, 0.5)
-        Status.BackgroundColor3 = COLORS.Accent
-        Status.Position = UDim2.new(1, -5, 0.5, 0)
-        Status.Size = UDim2.new(0, 20, 0, 20)
-        
-        UICorner_3.CornerRadius = UDim.new(0, 4)
-        UICorner_3.Parent = Status
-        
-        local enabled = false
-        Toggle.MouseButton1Click:Connect(function()
-            enabled = not enabled
-            Status.BackgroundColor3 = enabled and COLORS.Enabled or COLORS.Accent
-            callback(enabled)
-        end)
-        
-        return Toggle
-    end
-    
-    return lib
+    return Window
 end
 
-return UILib
+return Library
