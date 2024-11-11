@@ -1,159 +1,168 @@
-local UserInputService = game:GetService("UserInputService")
+local UILib = {}
 local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
 
-local SimpleUILibrary = {}
+-- Constants for styling
+local COLORS = {
+    Background = Color3.fromRGB(25, 25, 25),
+    Secondary = Color3.fromRGB(35, 35, 35),
+    Text = Color3.fromRGB(255, 255, 255),
+    Accent = Color3.fromRGB(70, 70, 70),
+    Enabled = Color3.fromRGB(0, 170, 255)
+}
 
-local function createRoundedFrame(name, parent, size, position, backgroundColor)
-    local frame = Instance.new("Frame")
-    frame.Name = name
-    frame.Size = size
-    frame.Position = position
-    frame.BackgroundColor3 = backgroundColor
-    frame.BorderSizePixel = 0
-    frame.Parent = parent
-
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 8)
-    corner.Parent = frame
-
-    return frame
-end
-
-local function createLabel(text, parent, position)
-    local label = Instance.new("TextLabel")
-    label.Text = text
-    label.Size = UDim2.new(1, -20, 0, 30)
-    label.Position = position
-    label.BackgroundTransparency = 1
-    label.Font = Enum.Font.SourceSansBold
-    label.TextColor3 = Color3.new(1, 1, 1)
-    label.TextSize = 14
-    label.Parent = parent
-    return label
-end
-
-function SimpleUILibrary.createWindow(title, size)
-    local gui = Instance.new("ScreenGui")
-    gui.Name = "SimpleUILibrary"
-    gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-
-    local mainFrame = createRoundedFrame("MainFrame", gui, size or UDim2.new(0, 300, 0, 350), UDim2.new(0.5, -150, 0.5, -175), Color3.new(0.1, 0.1, 0.1))
-
-    local titleBar = createRoundedFrame("TitleBar", mainFrame, UDim2.new(1, 0, 0, 30), UDim2.new(0, 0, 0, 0), Color3.new(0.08, 0.08, 0.08))
-    createLabel(title, titleBar, UDim2.new(0, 10, 0, 0))
-
-    local contentFrame = createRoundedFrame("ContentFrame", mainFrame, UDim2.new(1, -20, 1, -40), UDim2.new(0, 10, 0, 35), Color3.new(0.15, 0.15, 0.15))
-
-    -- Make the window draggable
-    local dragging
-    local dragInput
-    local dragStart
-    local startPos
-
-    local function update(input)
-        local delta = input.Position - dragStart
-        mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+function UILib.new(title)
+    -- Create main GUI elements
+    local ScreenGui = Instance.new("ScreenGui")
+    local Main = Instance.new("Frame")
+    local UICorner = Instance.new("UICorner")
+    local Title = Instance.new("TextLabel")
+    local Container = Instance.new("ScrollingFrame")
+    local UIListLayout = Instance.new("UIListLayout")
+    
+    ScreenGui.Name = "UILibrary"
+    ScreenGui.Parent = game.CoreGui
+    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    
+    Main.Name = "Main"
+    Main.Parent = ScreenGui
+    Main.BackgroundColor3 = COLORS.Background
+    Main.Position = UDim2.new(0.5, -150, 0.5, -125)
+    Main.Size = UDim2.new(0, 300, 0, 250)
+    Main.Active = true
+    Main.Draggable = true
+    
+    UICorner.CornerRadius = UDim.new(0, 6)
+    UICorner.Parent = Main
+    
+    Title.Name = "Title"
+    Title.Parent = Main
+    Title.BackgroundTransparency = 1
+    Title.Position = UDim2.new(0, 10, 0, 5)
+    Title.Size = UDim2.new(1, -20, 0, 30)
+    Title.Font = Enum.Font.GothamSemibold
+    Title.Text = title
+    Title.TextColor3 = COLORS.Text
+    Title.TextSize = 16
+    
+    Container.Name = "Container"
+    Container.Parent = Main
+    Container.BackgroundTransparency = 1
+    Container.Position = UDim2.new(0, 5, 0, 40)
+    Container.Size = UDim2.new(1, -10, 1, -45)
+    Container.ScrollBarThickness = 2
+    Container.ScrollBarImageColor3 = COLORS.Accent
+    
+    UIListLayout.Parent = Container
+    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    UIListLayout.Padding = UDim.new(0, 5)
+    
+    local lib = {}
+    
+    function lib:AddButton(text, callback)
+        local Button = Instance.new("TextButton")
+        local UICorner_2 = Instance.new("UICorner")
+        
+        Button.Name = "Button"
+        Button.Parent = Container
+        Button.BackgroundColor3 = COLORS.Secondary
+        Button.Size = UDim2.new(1, 0, 0, 30)
+        Button.Font = Enum.Font.Gotham
+        Button.Text = text
+        Button.TextColor3 = COLORS.Text
+        Button.TextSize = 14
+        Button.AutoButtonColor = false
+        
+        UICorner_2.CornerRadius = UDim.new(0, 4)
+        UICorner_2.Parent = Button
+        
+        Button.MouseButton1Click:Connect(callback)
+        
+        return Button
     end
-
-    titleBar.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragStart = input.Position
-            startPos = mainFrame.Position
-
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                end
-            end)
-        end
-    end)
-
-    titleBar.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            dragInput = input
-        end
-    end)
-
-    UserInputService.InputChanged:Connect(function(input)
-        if input == dragInput and dragging then
-            update(input)
-        end
-    end)
-
-    return contentFrame
-end
-
-function SimpleUILibrary.createButton(parent, text, callback)
-    local button = createRoundedFrame("Button", parent, UDim2.new(1, -20, 0, 30), UDim2.new(0, 10, 0, #parent:GetChildren() * 40), Color3.new(0.2, 0.2, 0.2))
-    createLabel(text, button, UDim2.new(0, 0, 0, 0))
-
-    button.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            callback()
-        end
-    end)
-
-    button.MouseEnter:Connect(function()
-        TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.new(0.25, 0.25, 0.25)}):Play()
-    end)
-
-    button.MouseLeave:Connect(function()
-        TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)}):Play()
-    end)
-
-    return button
-end
-
-function SimpleUILibrary.createTextbox(parent, placeholderText, callback)
-    local textbox = createRoundedFrame("Textbox", parent, UDim2.new(1, -20, 0, 30), UDim2.new(0, 10, 0, #parent:GetChildren() * 40), Color3.new(0.2, 0.2, 0.2))
-
-    local input = Instance.new("TextBox")
-    input.Size = UDim2.new(1, -20, 1, 0)
-    input.Position = UDim2.new(0, 10, 0, 0)
-    input.BackgroundTransparency = 1
-    input.Font = Enum.Font.SourceSans
-    input.TextColor3 = Color3.new(1, 1, 1)
-    input.TextSize = 14
-    input.PlaceholderText = placeholderText
-    input.Text = ""
-    input.Parent = textbox
-
-    input.FocusLost:Connect(function(enterPressed)
-        if enterPressed then
-            callback(input.Text)
-        end
-    end)
-
-    return textbox
-end
-
-function SimpleUILibrary.createToggle(parent, text, callback)
-    local toggle = createRoundedFrame("Toggle", parent, UDim2.new(1, -20, 0, 30), UDim2.new(0, 10, 0, #parent:GetChildren() * 40), Color3.new(0.2, 0.2, 0.2))
-    createLabel(text, toggle, UDim2.new(0, 0, 0, 0))
-
-    local toggleButton = createRoundedFrame("ToggleButton", toggle, UDim2.new(0, 40, 0, 20), UDim2.new(1, -50, 0.5, -10), Color3.new(0.3, 0.3, 0.3))
-    local toggleIndicator = createRoundedFrame("ToggleIndicator", toggleButton, UDim2.new(0, 16, 0, 16), UDim2.new(0, 2, 0.5, -8), Color3.new(0.8, 0.8, 0.8))
-
-    local toggled = false
-
-    local function updateToggle()
-        local targetPosition = toggled and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
-        local targetColor = toggled and Color3.new(0, 0.7, 0) or Color3.new(0.3, 0.3, 0.3)
-
-        TweenService:Create(toggleIndicator, TweenInfo.new(0.2), {Position = targetPosition}):Play()
-        TweenService:Create(toggleButton, TweenInfo.new(0.2), {BackgroundColor3 = targetColor}):Play()
+    
+    function lib:AddTextbox(placeholder, callback)
+        local Textbox = Instance.new("TextBox")
+        local UICorner_2 = Instance.new("UICorner")
+        
+        Textbox.Name = "Textbox"
+        Textbox.Parent = Container
+        Textbox.BackgroundColor3 = COLORS.Secondary
+        Textbox.Size = UDim2.new(1, 0, 0, 30)
+        Textbox.Font = Enum.Font.Gotham
+        Textbox.PlaceholderText = placeholder
+        Textbox.Text = ""
+        Textbox.TextColor3 = COLORS.Text
+        Textbox.TextSize = 14
+        Textbox.PlaceholderColor3 = COLORS.Accent
+        
+        UICorner_2.CornerRadius = UDim.new(0, 4)
+        UICorner_2.Parent = Textbox
+        
+        Textbox.FocusLost:Connect(function(enterPressed)
+            if enterPressed then
+                callback(Textbox.Text)
+            end
+        end)
+        
+        return Textbox
     end
-
-    toggle.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            toggled = not toggled
-            updateToggle()
-            callback(toggled)
-        end
-    end)
-
-    return toggle
+    
+    function lib:AddLabel(text)
+        local Label = Instance.new("TextLabel")
+        
+        Label.Name = "Label"
+        Label.Parent = Container
+        Label.BackgroundTransparency = 1
+        Label.Size = UDim2.new(1, 0, 0, 20)
+        Label.Font = Enum.Font.Gotham
+        Label.Text = text
+        Label.TextColor3 = COLORS.Text
+        Label.TextSize = 14
+        
+        return Label
+    end
+    
+    function lib:AddToggle(text, callback)
+        local Toggle = Instance.new("TextButton")
+        local UICorner_2 = Instance.new("UICorner")
+        local Status = Instance.new("Frame")
+        local UICorner_3 = Instance.new("UICorner")
+        
+        Toggle.Name = "Toggle"
+        Toggle.Parent = Container
+        Toggle.BackgroundColor3 = COLORS.Secondary
+        Toggle.Size = UDim2.new(1, 0, 0, 30)
+        Toggle.Font = Enum.Font.Gotham
+        Toggle.Text = text
+        Toggle.TextColor3 = COLORS.Text
+        Toggle.TextSize = 14
+        Toggle.AutoButtonColor = false
+        
+        UICorner_2.CornerRadius = UDim.new(0, 4)
+        UICorner_2.Parent = Toggle
+        
+        Status.Name = "Status"
+        Status.Parent = Toggle
+        Status.AnchorPoint = Vector2.new(1, 0.5)
+        Status.BackgroundColor3 = COLORS.Accent
+        Status.Position = UDim2.new(1, -5, 0.5, 0)
+        Status.Size = UDim2.new(0, 20, 0, 20)
+        
+        UICorner_3.CornerRadius = UDim.new(0, 4)
+        UICorner_3.Parent = Status
+        
+        local enabled = false
+        Toggle.MouseButton1Click:Connect(function()
+            enabled = not enabled
+            Status.BackgroundColor3 = enabled and COLORS.Enabled or COLORS.Accent
+            callback(enabled)
+        end)
+        
+        return Toggle
+    end
+    
+    return lib
 end
 
-return SimpleUILibrary
+return UILib
