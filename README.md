@@ -46,7 +46,7 @@ This library is a remake of the original TurtleLib, with significant visual and 
 First, require the library in your script:
 
 ```lua
-local library = loadstring(game:HttpGet("path/to/ui.lua"))()
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/EmptySyntax/SyntaxLib/refs/heads/main/main.lua"))()
 ```
 
 ## Basic Usage
