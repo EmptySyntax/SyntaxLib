@@ -1,4 +1,31 @@
-# SyntaxLib UI Library Documentation
+# SyntaxLib - A Modern Nordic-Themed UI Library
+*A sleek remake of the TurtleLib, redesigned with the Nord color palette*
+
+## Overview
+SyntaxLib is a modernized remake of the popular TurtleLib UI library, completely redesigned with a Nordic-inspired color scheme and enhanced functionality. This library provides a clean, minimalist interface for creating in-game UI elements in Roblox, while maintaining the familiar structure that made TurtleLib popular.
+
+## Why SyntaxLib?
+While TurtleLib served as an excellent foundation, SyntaxLib brings several improvements:
+
+- **Nordic Theme**: Implements the popular Nord color palette for a modern, easy-on-the-eyes design
+- **Enhanced Transparency**: Subtle transparency effects for a more contemporary look
+- **Blur Effects**: Background blur when the UI is active for better focus
+- **Improved Notifications**: Streamlined notification system with smooth animations
+- **Better Organization**: More structured and maintainable codebase
+- **Cross-Platform Compatibility**: Works seamlessly on both PC and mobile devices
+
+## Key Features
+- Draggable windows
+- Customizable buttons, toggles, and sliders
+- Advanced color picker with rainbow mode
+- Dropdown menus with dynamic options
+- Smooth animations and transitions
+- Notification system with auto-stacking
+- Global keybind support
+- Clean, modern aesthetics
+
+## Credit
+This library is a remake of the original TurtleLib, with significant visual and functional improvements. Full credit goes to the original TurtleLib creators for the base concept and structure.
 
 ## Table of Contents
 - [Getting Started](#getting-started)
