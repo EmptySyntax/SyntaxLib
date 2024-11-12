@@ -95,3 +95,97 @@ window:Box("Input Label", function(text, focusLost)
     end 
 end)
 ```
+
+### Sliders
+
+Add a slider:
+```lua
+window:Slider("Slider Name", 0, 100, 50, function(value)
+    print("Slider value:", value)
+end)
+```
+
+You can also update the slider value programmatically:
+```lua
+local slider = window:Slider("Slider Name", 0, 100, 50, function(value)
+    print("Slider value:", value)
+end)
+-- Update slider value
+slider:SetValue(75)
+```
+
+### Dropdowns
+
+Add a dropdown menu:
+```lua
+local dropdown = window:Dropdown("Dropdown Title", {
+    "Option 1",
+    "Option 2",
+    "Option 3"
+}, function(selected)
+    print("Selected:", selected)
+end)
+
+-- Add new options dynamically
+dropdown:Button("Option 4")
+
+-- Remove options
+dropdown:Remove("Option 1")
+```
+
+### Color Pickers
+
+Add a color picker:
+```lua
+-- Regular color picker
+local colorPicker = window:ColorPicker("Pick Color", Color3.fromRGB(255, 0, 0), function(color)
+    print("Selected color:", color)
+end)
+
+-- Rainbow mode color picker
+window:ColorPicker("Rainbow Colors", true, function(color)
+    print("Rainbow color:", color)
+end)
+
+-- Update color programmatically
+colorPicker:UpdateColorPicker(Color3.fromRGB(0, 255, 0))
+
+-- Enable rainbow mode programmatically
+colorPicker:UpdateColorPicker(true)
+```
+
+## Notifications
+
+Show notifications:
+```lua
+library.Notify({
+    Title = "Notification Title",
+    Description = "This is a notification message",
+    Duration = 5 -- Duration in seconds
+})
+```
+
+## Additional Features
+
+### Keybind to Toggle UI
+
+Set a keybind to show/hide the entire UI:
+```lua
+library:Keybind("RightControl") -- Uses Enum.KeyCode names
+```
+
+### Hide/Show UI
+
+Programmatically hide or show the UI:
+```lua
+library:Hide() -- Toggles UI visibility
+```
+
+### Destroy UI
+
+Remove the UI completely:
+```
+### Destroy UI
+
+Remove the UI completely:
+```
