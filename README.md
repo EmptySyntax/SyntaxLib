@@ -40,3 +40,12 @@ window:Toggle("Toggle Me", false, function(value)
   print("Toggle is now:", value)
 end)
 ```
+
+## Components
+
+### Windows
+
+Create a new window:
+```lua
+local window = library:Window("Window Title")
+```
