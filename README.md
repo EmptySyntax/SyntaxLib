@@ -184,8 +184,6 @@ library:Hide() -- Toggles UI visibility
 ### Destroy UI
 
 Remove the UI completely:
-```
-### Destroy UI
-
-Remove the UI completely:
+```lua
+library:Destroy()
 ```
