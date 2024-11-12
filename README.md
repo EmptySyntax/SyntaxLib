@@ -30,10 +30,12 @@ Here's a simple example showing basic usage:
 ```lua
 -- Create a window
 local window = library:Window("My Window")
+
 -- Add some basic elements
 window:Button("Click Me", function()
   print("Button clicked!")
 end)
+
 window:Toggle("Toggle Me", false, function(value)
   print("Toggle is now:", value)
 end)
