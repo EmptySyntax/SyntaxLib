@@ -59,3 +59,38 @@ window:Button("Button Text", function()
   print("Button pressed!")
 end)
 ```
+
+### Labels
+
+Add a label (text) to your window:
+```lua
+-- Regular label
+window:Label("Regular Label")
+
+-- Rainbow colored label
+window:Label("Rainbow Label", true)
+
+-- Custom colored label
+window:Label("Custom Label", Color3.fromRGB(255, 0, 0))
+```
+
+### Toggles
+
+Add a toggle switch:
+```lua
+window:Toggle("Toggle Option", false, function(value)
+  print("Toggle state:", value)
+end)
+```
+
+### Text Boxes
+
+Add an input text box:
+```lua
+window:Box("Input Label", function(text, focusLost)
+if focusLost then
+  print("Text submitted:", text)
+else
+  print("Text changed:", text)
+end
+```
