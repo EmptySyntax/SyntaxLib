@@ -88,9 +88,10 @@ end)
 Add an input text box:
 ```lua
 window:Box("Input Label", function(text, focusLost)
-if focusLost then
-  print("Text submitted:", text)
-else
-  print("Text changed:", text)
-end
+    if focusLost then
+      print("Text submitted:", text)
+    else
+      print("Text changed:", text)
+    end 
+end)
 ```
