@@ -9,7 +9,6 @@ While TurtleLib served as an excellent foundation, SyntaxLib brings several impr
 
 - **Nordic Theme**: Implements the popular Nord color palette for a modern, easy-on-the-eyes design
 - **Enhanced Transparency**: Subtle transparency effects for a more contemporary look
-- **Blur Effects**: Background blur when the UI is active for better focus
 - **Improved Notifications**: Streamlined notification system with smooth animations
 - **Better Organization**: More structured and maintainable codebase
 - **Cross-Platform Compatibility**: Works seamlessly on both PC and mobile devices
