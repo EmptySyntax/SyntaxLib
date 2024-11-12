@@ -49,3 +49,13 @@ Create a new window:
 ```lua
 local window = library:Window("Window Title")
 ```
+
+### Buttons
+
+Add a button to your window:
+```lua
+window:Button("Button Text", function()
+-- Callback function
+  print("Button pressed!")
+end)
+```
